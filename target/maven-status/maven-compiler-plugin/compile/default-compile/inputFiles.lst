@@ -1,0 +1,12 @@
+C:\Users\IDEA_Project\ES-SpringBoot\springboot-elasticsearch\src\main\java\com\zhou\essearch\document\ProductDocument.java
+C:\Users\IDEA_Project\ES-SpringBoot\springboot-elasticsearch\src\main\java\com\zhou\essearch\page\Paginable.java
+C:\Users\IDEA_Project\ES-SpringBoot\springboot-elasticsearch\src\main\java\com\zhou\essearch\document\ProductDocumentBuilder.java
+C:\Users\IDEA_Project\ES-SpringBoot\springboot-elasticsearch\src\main\java\com\zhou\essearch\service\EsSearchService.java
+C:\Users\IDEA_Project\ES-SpringBoot\springboot-elasticsearch\src\main\java\com\zhou\essearch\service\impl\BaseSearchServiceImpl.java
+C:\Users\IDEA_Project\ES-SpringBoot\springboot-elasticsearch\src\main\java\com\zhou\essearch\page\Page.java
+C:\Users\IDEA_Project\ES-SpringBoot\springboot-elasticsearch\src\main\java\com\zhou\essearch\service\BaseSearchService.java
+C:\Users\IDEA_Project\ES-SpringBoot\springboot-elasticsearch\src\main\java\com\zhou\essearch\controller\EsSearchController.java
+C:\Users\IDEA_Project\ES-SpringBoot\springboot-elasticsearch\src\main\java\com\zhou\essearch\EssearchApplication.java
+C:\Users\IDEA_Project\ES-SpringBoot\springboot-elasticsearch\src\main\java\com\zhou\essearch\page\SimplePage.java
+C:\Users\IDEA_Project\ES-SpringBoot\springboot-elasticsearch\src\main\java\com\zhou\essearch\repository\ProductDocumentRepository.java
+C:\Users\IDEA_Project\ES-SpringBoot\springboot-elasticsearch\src\main\java\com\zhou\essearch\service\impl\EsSearchServiceImpl.java

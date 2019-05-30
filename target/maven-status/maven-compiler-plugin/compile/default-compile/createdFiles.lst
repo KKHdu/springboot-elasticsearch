@@ -1,0 +1,12 @@
+com\zhou\essearch\page\Paginable.class
+com\zhou\essearch\page\Page.class
+com\zhou\essearch\service\impl\EsSearchServiceImpl.class
+com\zhou\essearch\document\ProductDocument.class
+com\zhou\essearch\document\ProductDocumentBuilder.class
+com\zhou\essearch\page\SimplePage.class
+com\zhou\essearch\EssearchApplication.class
+com\zhou\essearch\service\EsSearchService.class
+com\zhou\essearch\service\BaseSearchService.class
+com\zhou\essearch\service\impl\BaseSearchServiceImpl.class
+com\zhou\essearch\repository\ProductDocumentRepository.class
+com\zhou\essearch\controller\EsSearchController.class

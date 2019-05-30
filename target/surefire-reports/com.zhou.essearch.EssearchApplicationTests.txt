@@ -1,0 +1,36 @@
+-------------------------------------------------------------------------------
+Test set: com.zhou.essearch.EssearchApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 8, Failures: 0, Errors: 8, Skipped: 0, Time elapsed: 9.077 s <<< FAILURE! - in com.zhou.essearch.EssearchApplicationTests
+getAll(com.zhou.essearch.EssearchApplicationTests)  Time elapsed: 0.281 s  <<< ERROR!
+org.elasticsearch.client.transport.NoNodeAvailableException: None of the configured nodes are available: [{#transport#-1}{ZkFn02RVRGKsmPklq5QUng}{localhost}{127.0.0.1:9300}]
+	at com.zhou.essearch.EssearchApplicationTests.getAll(EssearchApplicationTests.java:61)
+
+queryHit(com.zhou.essearch.EssearchApplicationTests)  Time elapsed: 0.016 s  <<< ERROR!
+org.elasticsearch.client.transport.NoNodeAvailableException: None of the configured nodes are available: [{#transport#-1}{ZkFn02RVRGKsmPklq5QUng}{localhost}{127.0.0.1:9300}]
+	at com.zhou.essearch.EssearchApplicationTests.queryHit(EssearchApplicationTests.java:87)
+
+deleteIndex(com.zhou.essearch.EssearchApplicationTests)  Time elapsed: 0 s  <<< ERROR!
+org.elasticsearch.client.transport.NoNodeAvailableException: None of the configured nodes are available: [{#transport#-1}{ZkFn02RVRGKsmPklq5QUng}{localhost}{127.0.0.1:9300}]
+	at com.zhou.essearch.EssearchApplicationTests.deleteIndex(EssearchApplicationTests.java:106)
+
+deleteAll(com.zhou.essearch.EssearchApplicationTests)  Time elapsed: 0 s  <<< ERROR!
+org.elasticsearch.client.transport.NoNodeAvailableException: None of the configured nodes are available: [{#transport#-1}{ZkFn02RVRGKsmPklq5QUng}{localhost}{127.0.0.1:9300}]
+	at com.zhou.essearch.EssearchApplicationTests.deleteAll(EssearchApplicationTests.java:68)
+
+getById(com.zhou.essearch.EssearchApplicationTests)  Time elapsed: 0.015 s  <<< ERROR!
+org.elasticsearch.client.transport.NoNodeAvailableException: None of the configured nodes are available: [{#transport#-1}{ZkFn02RVRGKsmPklq5QUng}{localhost}{127.0.0.1:9300}]
+	at com.zhou.essearch.EssearchApplicationTests.getById(EssearchApplicationTests.java:73)
+
+save(com.zhou.essearch.EssearchApplicationTests)  Time elapsed: 0 s  <<< ERROR!
+org.elasticsearch.client.transport.NoNodeAvailableException: None of the configured nodes are available: [{#transport#-1}{ZkFn02RVRGKsmPklq5QUng}{localhost}{127.0.0.1:9300}]
+	at com.zhou.essearch.EssearchApplicationTests.save(EssearchApplicationTests.java:30)
+
+query(com.zhou.essearch.EssearchApplicationTests)  Time elapsed: 0.016 s  <<< ERROR!
+org.elasticsearch.client.transport.NoNodeAvailableException: None of the configured nodes are available: [{#transport#-1}{ZkFn02RVRGKsmPklq5QUng}{localhost}{127.0.0.1:9300}]
+	at com.zhou.essearch.EssearchApplicationTests.query(EssearchApplicationTests.java:78)
+
+queryHitByPage(com.zhou.essearch.EssearchApplicationTests)  Time elapsed: 0 s  <<< ERROR!
+org.elasticsearch.client.transport.NoNodeAvailableException: None of the configured nodes are available: [{#transport#-1}{ZkFn02RVRGKsmPklq5QUng}{localhost}{127.0.0.1:9300}]
+	at com.zhou.essearch.EssearchApplicationTests.queryHitByPage(EssearchApplicationTests.java:98)
+
