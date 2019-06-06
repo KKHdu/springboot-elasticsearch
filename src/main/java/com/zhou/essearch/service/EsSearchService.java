@@ -3,7 +3,6 @@ package com.zhou.essearch.service;
 import com.zhou.essearch.document.ProductDocument;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author zhoudong

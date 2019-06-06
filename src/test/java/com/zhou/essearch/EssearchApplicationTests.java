@@ -2,7 +2,6 @@ package com.zhou.essearch;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.zhou.essearch.document.ProductDocument;
 import com.zhou.essearch.document.ProductDocumentBuilder;
 import com.zhou.essearch.page.Page;
@@ -15,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -103,31 +104,32 @@ public class EssearchApplicationTests {
     // 目前只涉及-> :and :or :remove
     @Test
     public void pieceQuery() {
-        String str = "#98260 = 22 :and ( #55678 < 37 :or ( #55678 > 44 :and #98442 <= 1 ) ) :and #1778 = 1";
-        String str2 = "C98260，22";
+        String str = "#98260 = 22 :and ( #55678 < 37 :or ( #55678 > 44 :and #98442 <= 1 ) ) :or #1778 = 1";
+        String str1 = "#98260 = 22 :and ( #55678 < 37 :or ( #55678 > 44 :and #98442 <= 1 ) )";
+        String str2 = "#1111 = 22 :and #2222 < 37 :or #3333 > 44";
 
-        log.info("【全局搜索内容】：{}", JSON.toJSONString(esSearchService.pieceQuery(str,ProductDocument.class)));
+        log.info("【全局搜索内容】：{}", JSON.toJSONString(esSearchService.pieceQuery(str, ProductDocument.class)));
     }
     // ---------------------------------
 
     @Test
     public void query() {
-        log.info("【全局搜索内容】：{}", JSON.toJSONString(esSearchService.query("荣耀",ProductDocument.class)));
+        log.info("【全局搜索内容】：{}", JSON.toJSONString(esSearchService.query("荣耀", ProductDocument.class)));
     }
 
     @Test
     public void query2() {
-        log.info("【单字段匹配单关键词查询】：{}", JSON.toJSONString(esSearchService.query2("天下读物2",ProductDocument.class)));
+        log.info("【单字段匹配单关键词查询】：{}", JSON.toJSONString(esSearchService.query2("天下读物2", ProductDocument.class)));
     }
 
     @Test
     public void query3() {
-        log.info("【多字段各自匹配单关键词查询】：{}", JSON.toJSONString(esSearchService.query3("荣耀，1558688764572",ProductDocument.class)));
+        log.info("【多字段各自匹配单关键词查询】：{}", JSON.toJSONString(esSearchService.query3("荣耀，1558688764572", ProductDocument.class)));
     }
 
     @Test
     public void query4() {
-        log.info("【根据关键词范围查询】：{}", JSON.toJSONString(esSearchService.query4("1558688764572",ProductDocument.class)));
+        log.info("【根据关键词范围查询】：{}", JSON.toJSONString(esSearchService.query4("1558688764572", ProductDocument.class)));
     }
 
     @Test

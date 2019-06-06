@@ -78,7 +78,7 @@ public class EsSearchController {
      */
     @RequestMapping("query/{keyword}")
     public List<ProductDocument> query(@PathVariable String keyword){
-        return esSearchService.query(keyword,ProductDocument.class);
+        return esSearchService.query(keyword, ProductDocument.class);
     }
 
     /**
@@ -108,8 +108,8 @@ public class EsSearchController {
      * @return
      */
     @RequestMapping("query_hit_page")
-    public Page<Map<String,Object>> queryHitByPage(@RequestParam int pageNo,@RequestParam int pageSize
-                                                    ,@RequestParam String keyword, @RequestParam String indexName, @RequestParam String fields){
+    public Page<Map<String,Object>> queryHitByPage(@RequestParam int pageNo, @RequestParam int pageSize
+                                                    , @RequestParam String keyword, @RequestParam String indexName, @RequestParam String fields){
         String[] fieldNames = {};
         if(fields.contains(",")) fieldNames = fields.split(",");
         else fieldNames[0] = fields;

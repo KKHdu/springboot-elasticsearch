@@ -2,6 +2,7 @@ package com.zhou.essearch.service.impl;
 
 import com.zhou.essearch.page.Page;
 import com.zhou.essearch.service.BaseSearchService;
+import com.zhou.essearch.tool.SqlToEs;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.index.query.Operator;
@@ -11,7 +12,6 @@ import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
@@ -39,12 +39,24 @@ public class BaseSearchServiceImpl<T> implements BaseSearchService<T> {
 
     @Override
     public List<T> pieceQuery(String strSQL, Class<T> clazz){
-        List strList = Arrays.asList(strSQL.split(" "));
-        System.out.println(strList);
+        List strList2 = Arrays.asList(strSQL.split(" "));
+        // System.out.println(strList2);
 
-        for (int i=0;i<strList.size();i++){
-
+        // strList2 赋给 strList   （Arrays才能编辑）
+        List strList = new ArrayList();
+        for(int i=0;i<strList2.size();i++){
+            strList.add(strList2.get(i));
         }
+
+        //匹配括号，拼装query语句
+        List nextList = SqlToEs.dyForList(strList);
+        System.out.println("最后形成的数组---------------->");
+        // System.out.println(nextList);
+
+        // 匹配括号结束，简单语句拼装query语句
+        QueryBuilder finList = SqlToEs.buider(nextList,false);
+        System.out.println("最后形成的query语句---------------->");
+        System.out.println(finList);
 //        Stack stack = new Stack();  // 建栈
 //        stack.push(strList.get(0)); // 第一个元素进栈
 //        for (int i=1;i<strList.size();i++){
@@ -77,24 +89,30 @@ public class BaseSearchServiceImpl<T> implements BaseSearchService<T> {
 //            }
 //        }
 
-        QueryBuilder queryBuilder1 = createQueryBuilder("A","productName");
-        QueryBuilder queryBuilder2 = createQueryBuilder("B","productDec");
-        QueryBuilder queryBuilder3 = createQueryBuilder("C","createTime");
-        QueryBuilder queryBuilder4 = createQueryBuilder("D","updateTime");
-        //and链接两个查询条件用must()，or的话使用should()，remove的话使用mustNot()。
-        QueryBuilder queryBuilder11 = QueryBuilders.boolQuery().must(queryBuilder3).mustNot(queryBuilder4);
-        QueryBuilder queryBuilder22 = QueryBuilders.boolQuery().should(queryBuilder2).should(queryBuilder11);
-        // QueryBuilder queryBuilder33 = QueryBuilders.boolQuery().must(queryBuilder1).mustNot(queryBuilder2);
-        QueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryBuilder1).must(queryBuilder22);
+//        QueryBuilder queryBuilder1 = createQueryBuilder("A","productName");
+//        QueryBuilder queryBuilder2 = createQueryBuilder("B","productDec");
+//        QueryBuilder queryBuilder3 = createQueryBuilder("C","createTime");
+//        QueryBuilder queryBuilder4 = createQueryBuilder("D","updateTime");
+//        //and链接两个查询条件用must()，or的话使用should()，remove的话使用mustNot()。
+//        QueryBuilder queryBuilder11 = QueryBuilders.boolQuery().must(queryBuilder3).mustNot(queryBuilder4);
+//        QueryBuilder queryBuilder22 = QueryBuilders.boolQuery().should(queryBuilder2).should(queryBuilder11);
+//        // QueryBuilder queryBuilder33 = QueryBuilders.boolQuery().must(queryBuilder1).mustNot(queryBuilder2);
+//        QueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryBuilder1).must(queryBuilder22);
+//
+//        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+//                .withQuery(queryBuilder) // 多字段各自匹配关键词查询
+//                // .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
+//                // .withSort(new FieldSortBuilder("productName").order(SortOrder.DESC))
+//                .build();
+//        System.out.println("查询的语句:" + searchQuery.getQuery().toString());
 
-        SearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(queryBuilder) // 多字段各自匹配关键词查询
-                // .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
-                // .withSort(new FieldSortBuilder("productName").order(SortOrder.DESC))
-                .build();
-        System.out.println("查询的语句:" + searchQuery.getQuery().toString());
         return null;
     }
+
+// -------------------------query---拼装---END---------------------------------
+
+
+
 
     @Override
     public List<T> query(String keyword, Class<T> clazz) {
@@ -185,7 +203,7 @@ public class BaseSearchServiceImpl<T> implements BaseSearchService<T> {
      * @date: 2018/12/18 10:29
      */
     @Override
-    public Page<Map<String, Object>> queryHitByPage(int pageNo,int pageSize, String keyword, String indexName, String... fieldNames) {
+    public Page<Map<String, Object>> queryHitByPage(int pageNo, int pageSize, String keyword, String indexName, String... fieldNames) {
         // 构造查询条件,使用标准分词器.
         QueryBuilder matchQuery = createQueryBuilder(keyword,fieldNames);
 
@@ -215,7 +233,7 @@ public class BaseSearchServiceImpl<T> implements BaseSearchService<T> {
      * @auther: zhoudong
      * @date: 2018/12/18 10:42
      */
-    private QueryBuilder createQueryBuilder(String keyword, String... fieldNames){
+    public static QueryBuilder createQueryBuilder(String keyword, String... fieldNames){
         // 构造查询条件,使用标准分词器.
         return QueryBuilders.multiMatchQuery(keyword,fieldNames)   // matchQuery(),单字段搜索
                 // .analyzer("ik_max_word")
