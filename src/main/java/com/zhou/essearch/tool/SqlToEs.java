@@ -5,6 +5,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -70,7 +71,7 @@ public class SqlToEs extends BaseSearchServiceImpl {
     }
 
     public static QueryBuilder buider(List rk, boolean x){
-        // 判断 简单拼装 / 括号拼装  true：括号拼装
+        // 判断 简单拼装 / 括号拼装 ;     true：括号拼装
         int numL = rk.size()-1;
         int numS = 0;
         if (x){
@@ -133,6 +134,40 @@ public class SqlToEs extends BaseSearchServiceImpl {
         QueryBuilder reQueryList = toQueryBuild(queryList,act); // 调用方法，拿到一个query语
 
         return reQueryList;
+    }
+
+    /* 整合 原伪sql -> 规则形式
+    * 包含 (  )  <  >  <=  >=  =
+    * */
+    public static List regular(String str){
+        String fixStr = "";
+        for (int i=0;i<str.length();i++){
+            char ch = str.charAt(i);
+            String strFch = String.valueOf(ch);
+            if ("(".equals(strFch) || ")".equals(strFch)){
+                fixStr += " " + ch + " ";
+            }else if ("<".equals(strFch) ||">".equals(strFch)){
+                char chNext = str.charAt(i+1);
+                String strFchNext = String.valueOf(chNext);
+                fixStr += " " + ch;
+                if (!"=".equals(strFchNext)){
+                    fixStr += " ";
+                }
+            }else if ("=".equals(strFch)){
+                char chLast = str.charAt(i-1);
+                String strFchLast = String.valueOf(chLast);
+                if (!"<".equals(strFchLast) && !">".equals(strFchLast)){
+                    fixStr += " ";
+                }
+                fixStr += ch + " ";
+            }else{
+                fixStr += ch;
+            }
+        }
+        List strList2 = Arrays.asList(fixStr.split("\\s+"));
+        System.out.println("===============");
+        System.out.println(strList2);
+        return strList2;
     }
 
 }

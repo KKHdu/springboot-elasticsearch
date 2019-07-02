@@ -39,10 +39,10 @@ public class BaseSearchServiceImpl<T> implements BaseSearchService<T> {
 
     @Override
     public List<T> pieceQuery(String strSQL, Class<T> clazz){
-        List strList2 = Arrays.asList(strSQL.split(" "));
-        // System.out.println(strList2);
+        // 整合 strSQL 并 通过 List存储
+        List strList2 = SqlToEs.regular(strSQL);
 
-        // strList2 赋给 strList   （Arrays才能编辑）
+        // strList2 赋给 strList   （Array才能编辑） // 为什么不直接ArrayList 灵魂拷问??? 20190702
         List strList = new ArrayList();
         for(int i=0;i<strList2.size();i++){
             strList.add(strList2.get(i));

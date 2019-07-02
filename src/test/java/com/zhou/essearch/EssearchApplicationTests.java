@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -104,11 +105,40 @@ public class EssearchApplicationTests {
     // 目前只涉及-> :and :or :remove
     @Test
     public void pieceQuery() {
-        String str = "#98260 = 22 :and ( #55678 < 37 :or ( #55678 > 44 :and #98442 <= 1 ) ) :or #1778 = 1";
+        String str = "#98260 = 22 :and(#55678<37 :or (#55678 > 44 :and #98442<=1 ) ) :or #1778 =1";
         String str1 = "#98260 = 22 :and ( #55678 < 37 :or ( #55678 > 44 :and #98442 <= 1 ) )";
-        String str2 = "#1111 = 22 :and #2222 < 37 :or #3333 > 44";
+        String str2 = "#1111   = 22 :and   #2222  < 37 :or #3333 >   44";
 
-        log.info("【全局搜索内容】：{}", JSON.toJSONString(esSearchService.pieceQuery(str, ProductDocument.class)));
+        String fixStr = "";
+        for (int i=0;i<str.length();i++){
+            char ch = str.charAt(i);
+            String strFch = String.valueOf(ch);
+            if ("(".equals(strFch) || ")".equals(strFch)){
+                fixStr += " " + ch + " ";
+            }else if ("<".equals(strFch) ||">".equals(strFch)){
+                char chNext = str.charAt(i+1);
+                String strFchNext = String.valueOf(chNext);
+                fixStr += " " + ch;
+                if (!"=".equals(strFchNext)){
+                    fixStr += " ";
+                }
+            }else if ("=".equals(strFch)){
+                char chLast = str.charAt(i-1);
+                String strFchLast = String.valueOf(chLast);
+                if (!"<".equals(strFchLast) && !">".equals(strFchLast)){
+                    fixStr += " ";
+                }
+                fixStr += ch + " ";
+            }else{
+                fixStr += ch;
+            }
+        }
+        System.out.println(fixStr);
+        List strList2 = Arrays.asList(fixStr.split("\\s+"));
+        System.out.println("===============");
+        System.out.println(strList2);
+
+        // log.info("【全局搜索内容】：{}", JSON.toJSONString(esSearchService.pieceQuery(str, ProductDocument.class)));
     }
     // ---------------------------------
 
