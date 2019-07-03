@@ -51,7 +51,7 @@ public class BaseSearchServiceImpl<T> implements BaseSearchService<T> {
         //匹配括号，拼装query语句
         List nextList = SqlToEs.dyForList(strList);
         System.out.println("最后形成的数组---------------->");
-        // System.out.println(nextList);
+        System.out.println(nextList);
 
         // 匹配括号结束，简单语句拼装query语句
         QueryBuilder finList = SqlToEs.buider(nextList,false);

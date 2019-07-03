@@ -23,7 +23,13 @@ public class SqlToEs extends BaseSearchServiceImpl {
                         // System.out.println("j:"+j);
                         rk.add(strList.get(j)); // 把左括号 存入 数组rk
                         strList.set(j," ");
-                        QueryBuilder queryBuilder = buider(rk,true); // 调用方法 拿到最小括号里面的query语句
+                        // 调正 rk 的前后顺序
+                        List rkNor = new ArrayList();
+                        for (int z=rk.size()-1;z>=0;z--){
+                            rkNor.add(rk.get(z));
+                        }
+
+                        QueryBuilder queryBuilder = buider(rkNor,true); // 调用方法 拿到最小括号里面的query语句
                         strList.set(j,queryBuilder); // 用 query语句替换这个位置的value  更新strList
                         break;
                     }else{
@@ -35,6 +41,9 @@ public class SqlToEs extends BaseSearchServiceImpl {
             }
 
         }
+
+        // strList 当前顺序是倒序 编辑成正常顺序
+
         return strList;
     }
 
@@ -79,7 +88,7 @@ public class SqlToEs extends BaseSearchServiceImpl {
             numS = 1;
         }
 
-        List<QueryBuilder> queryList = new ArrayList<QueryBuilder>(); // 初始化queryBuilder 存放数组
+        List<QueryBuilder> queryList = new ArrayList<QueryBuilder>(); // 初始化 queryBuilder 存放数组
         QueryBuilder queryBuilder; // 初始化queryBuilder
 
         List act = new ArrayList(); // 初始化操作符存放数组
@@ -92,6 +101,7 @@ public class SqlToEs extends BaseSearchServiceImpl {
 //            System.out.println(newString);
 //            System.out.println("m-----------------m");
 
+            //正则表达式 取 { 以后的 内容 进行操作
             String regEx = "\\{.*";
             Pattern pattern = Pattern.compile(regEx);
             Matcher matcher = pattern.matcher(newString);
@@ -109,7 +119,7 @@ public class SqlToEs extends BaseSearchServiceImpl {
                     String act_p_next = rk.get(i - 1).toString(); // 判断符号的前一位（值）
 
                     if ("=".equals(act_p)) {
-                        queryBuilder = createQueryBuilder(act_p_next, act_p_last);
+                            queryBuilder = QueryBuilders.termQuery(act_p_next, act_p_last);
                         queryList.add(queryBuilder);// 单个queryBuilder写入数组
                     } else if ("<=".equals(act_p)) {
                         queryBuilder = QueryBuilders.rangeQuery(act_p_last).gte(act_p_next);
@@ -165,8 +175,7 @@ public class SqlToEs extends BaseSearchServiceImpl {
             }
         }
         List strList2 = Arrays.asList(fixStr.split("\\s+"));
-        System.out.println("===============");
-        System.out.println(strList2);
+
         return strList2;
     }
 
