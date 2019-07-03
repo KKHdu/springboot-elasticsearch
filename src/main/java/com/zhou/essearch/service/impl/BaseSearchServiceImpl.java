@@ -40,14 +40,15 @@ public class BaseSearchServiceImpl<T> implements BaseSearchService<T> {
     @Override
     public List<T> pieceQuery(String strSQL, Class<T> clazz){
         // 整合 strSQL 并 通过 List存储
-        List strList2 = SqlToEs.regular(strSQL);
+        List strList = SqlToEs.regular(strSQL);
 
         // strList2 赋给 strList   （Array才能编辑） // 为什么不直接ArrayList 灵魂拷问??? 20190702
-        List strList = new ArrayList();
-        for(int i=0;i<strList2.size();i++){
-            strList.add(strList2.get(i));
-        }
+//        List strList = new ArrayList();
+//        for(int i=0;i<strList2.size();i++){
+//            strList.add(strList2.get(i));
+//        }
 
+        /**/
         //匹配括号，拼装query语句
         List nextList = SqlToEs.dyForList(strList);
         System.out.println("最后形成的数组---------------->");
@@ -57,6 +58,7 @@ public class BaseSearchServiceImpl<T> implements BaseSearchService<T> {
         QueryBuilder finList = SqlToEs.buider(nextList,false);
         System.out.println("最后形成的query语句---------------->");
         System.out.println(finList);
+        /**/
 //        Stack stack = new Stack();  // 建栈
 //        stack.push(strList.get(0)); // 第一个元素进栈
 //        for (int i=1;i<strList.size();i++){

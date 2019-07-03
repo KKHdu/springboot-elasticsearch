@@ -12,7 +12,12 @@ import java.util.regex.Pattern;
 
 public class SqlToEs extends BaseSearchServiceImpl {
 
-    public static List dyForList(List strList){
+        public static List dyForList(List strListOri){
+        //判断是否含 :in 操作符
+        List strList = SqlToEs.inAbout(strListOri);
+//        System.out.println("判断:in后形成的数组---------------->");
+//        System.out.println(strList);
+
         List rk = new ArrayList();
         // System.out.println(strList.size());
         for (int i=0;i<strList.size();i++){
@@ -23,12 +28,11 @@ public class SqlToEs extends BaseSearchServiceImpl {
                         // System.out.println("j:"+j);
                         rk.add(strList.get(j)); // 把左括号 存入 数组rk
                         strList.set(j," ");
-                        // 调正 rk 的前后顺序
+                        // ---> 调正 rk 的前后顺序 <---
                         List rkNor = new ArrayList();
                         for (int z=rk.size()-1;z>=0;z--){
                             rkNor.add(rk.get(z));
                         }
-
                         QueryBuilder queryBuilder = buider(rkNor,true); // 调用方法 拿到最小括号里面的query语句
                         strList.set(j,queryBuilder); // 用 query语句替换这个位置的value  更新strList
                         break;
@@ -41,8 +45,6 @@ public class SqlToEs extends BaseSearchServiceImpl {
             }
 
         }
-
-        // strList 当前顺序是倒序 编辑成正常顺序
 
         return strList;
     }
@@ -113,19 +115,24 @@ public class SqlToEs extends BaseSearchServiceImpl {
             }else if (":and".equals(act_p) || ":or".equals(act_p) || ":remove".equals(act_p)) {
                 act.add(act_p); // 操作符写入数组
             } else {
-                if ("=".equals(act_p) || ">=".equals(act_p) || "<=".equals(act_p) || ">".equals(act_p) || "<".equals(act_p)) {
+                if (":in".equals(act_p) || "=".equals(act_p) || ">=".equals(act_p) || "<=".equals(act_p) || ">".equals(act_p) || "<".equals(act_p)) {
 
-                    String act_p_last = rk.get(i + 1).toString(); //判断符号的后一位（字段） 由于数组是反的，所以注意判断
-                    String act_p_next = rk.get(i - 1).toString(); // 判断符号的前一位（值）
+                    String act_p_last = rk.get(i - 1).toString(); //190703 做了顺序调整 //判断符号的后一位（字段） 由于数组是反的，所以注意判断
+                    String act_p_next = rk.get(i + 1).toString(); //190703 做了顺序调整 // 判断符号的前一位（值）
 
-                    if ("=".equals(act_p)) {
-                            queryBuilder = QueryBuilders.termQuery(act_p_next, act_p_last);
+                    if (":in".equals(act_p)){
+                        // 把:in 匹配的内容 字符串转成数组 再构建 terms
+                        List inTermsList = inTerms(act_p_next);
+                        queryBuilder = QueryBuilders.termsQuery(act_p_last, inTermsList);
+                        queryList.add(queryBuilder);
+                    } else if ("=".equals(act_p)) {
+                        queryBuilder = QueryBuilders.termQuery(act_p_last, act_p_next);
                         queryList.add(queryBuilder);// 单个queryBuilder写入数组
                     } else if ("<=".equals(act_p)) {
-                        queryBuilder = QueryBuilders.rangeQuery(act_p_last).gte(act_p_next);
+                        queryBuilder = QueryBuilders.rangeQuery(act_p_last).lte(act_p_next);
                         queryList.add(queryBuilder);
                     } else if (">=".equals(act_p)) {
-                        queryBuilder = QueryBuilders.rangeQuery(act_p_last).lte(act_p_next);
+                        queryBuilder = QueryBuilders.rangeQuery(act_p_last).gte(act_p_next);
                         queryList.add(queryBuilder);
                     } else if (">".equals(act_p)) {
                         queryBuilder = QueryBuilders.rangeQuery(act_p_last).gt(act_p_next);
@@ -145,6 +152,30 @@ public class SqlToEs extends BaseSearchServiceImpl {
 
         return reQueryList;
     }
+
+    /* 简单处理 把 :in 括号中的内容当成一个整体
+    * 暨 删除 :in 的两个括号
+    * 这里认为 :in 中不允许包含任何操作符
+    * */
+    public static List inAbout(List strList){
+        for (int i=0;i<strList.size();i++){
+            if(":in".equals(strList.get(i).toString())){
+                for(int j=i;j<strList.size();j++){
+                    if("(".equals(strList.get(j).toString())){
+                        strList.remove(j);
+                    }else if (")".equals(strList.get(j).toString())){
+                        strList.remove(j);
+                        break;
+                    }
+                }
+            }
+        }
+        return strList;
+    }
+
+
+
+
 
     /* 整合 原伪sql -> 规则形式
     * 包含 (  )  <  >  <=  >=  =
@@ -176,7 +207,21 @@ public class SqlToEs extends BaseSearchServiceImpl {
         }
         List strList2 = Arrays.asList(fixStr.split("\\s+"));
 
-        return strList2;
+        // strList2 赋给 strList   （Array才能编辑）
+        List strList = new ArrayList();
+        for(int i=0;i<strList2.size();i++){
+            strList.add(strList2.get(i));
+        }
+
+        return strList;
     }
 
+    /* 整合 :in 中内容 -> List
+     * */
+    public static List inTerms(String inStr){
+        List inTermsList = Arrays.asList(inStr.split(","));
+//        System.out.println("||||||||||||||||||||");
+//        System.out.println(inTermsList);
+        return inTermsList;
+    }
 }

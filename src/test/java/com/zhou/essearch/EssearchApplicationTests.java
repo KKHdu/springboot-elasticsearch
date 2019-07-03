@@ -107,7 +107,8 @@ public class EssearchApplicationTests {
     public void pieceQuery() {
         String str = "#98260 = 22 :and(#55678<37 :or (#55678 > 44 :and #98442<=1 ) ) :or #1778 =1";
         String str1 = "#98260 = 22 :and ( #55678 < 37 :or ( #55678 > 44 :and #98442 <= 1 ) )";
-        String str2 = "(line_id   = 4 :and   speech_number  = 1) :or line_id =   1";//
+        String str2 = "(line_id   >=2 :and line_id < 4 :or line_id = 4) :or line_id =   1";
+        String str3 = "line_id  >= 5 :and line_id   :in (3,5,8) :or (line_id>=20 :and line_id=20)";
 
 //        String fixStr = "";
 //        for (int i=0;i<str.length();i++){
