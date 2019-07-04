@@ -108,7 +108,7 @@ public class EssearchApplicationTests {
         String str3 = "line_id  >= 5 :and line_id   :in (3,5,8) :or (line_id>=20 :and line_id=20)";
 
         // String res = JSON.toJSONString(esSearchService.pieceQuery(str2, ProductDocument.class));
-        List res2 = esSearchService.pieceQuery(str2, ProductDocument.class);
+        List res2 = esSearchService.pieceQuery(str, ProductDocument.class);
         String res = JSON.toJSONString(res2);
 
         log.info("【全局搜索内容】：{} >>>");

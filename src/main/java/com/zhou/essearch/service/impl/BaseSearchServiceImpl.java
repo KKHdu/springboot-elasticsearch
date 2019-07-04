@@ -39,14 +39,8 @@ public class BaseSearchServiceImpl<T> implements BaseSearchService<T> {
 
     @Override
     public List<T> pieceQuery(String strSQL, Class<T> clazz){
-        // 整合 strSQL 并 通过 List存储
+        // 整合 伪SQL 并 通过 List存储
         List strList = SqlToEs.regular(strSQL);
-
-//        // strList2 赋给 strList   （Array才能编辑） // 为什么不直接ArrayList 灵魂拷问??? 20190702
-//        List strList = new ArrayList();
-//        for(int i=0;i<strList2.size();i++){
-//            strList.add(strList2.get(i));
-//        }
 
         //匹配括号，拼装query语句
         List nextList = SqlToEs.dyForList(strList);
@@ -54,6 +48,7 @@ public class BaseSearchServiceImpl<T> implements BaseSearchService<T> {
         // System.out.println(nextList);
 
         // 匹配括号结束，简单语句拼装query语句
+        // false：表示简单拼装
         QueryBuilder finList = SqlToEs.buider(nextList,false);
         System.out.println("最后形成的query语句----------->");
         // System.out.println(finList);
@@ -114,7 +109,7 @@ public class BaseSearchServiceImpl<T> implements BaseSearchService<T> {
 //                .build();
 //        System.out.println("查询的语句:" + searchQuery.getQuery().toString());
 
-        System.out.println(elasticsearchTemplate.count(searchQuery,clazz));// count  拿到查询数量
+        // System.out.println(elasticsearchTemplate.count(searchQuery,clazz));// count  拿到查询数量
         return elasticsearchTemplate.queryForList(searchQuery,clazz); // count  拿到查询内容数组
     }
 
