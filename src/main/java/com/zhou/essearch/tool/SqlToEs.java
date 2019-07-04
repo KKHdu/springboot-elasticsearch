@@ -12,7 +12,11 @@ import java.util.regex.Pattern;
 
 public class SqlToEs extends BaseSearchServiceImpl {
 
-        public static List dyForList(List strListOri){
+    /*
+    * 通过匹配括号 拆分和组合小范围的对应关系
+    * 其中 :in 操作单独判断
+    * */
+    public static List dyForList(List strListOri){
         //判断是否含 :in 操作符
         List strList = SqlToEs.inAbout(strListOri);
 //        System.out.println("判断:in后形成的数组---------------->");
@@ -43,12 +47,15 @@ public class SqlToEs extends BaseSearchServiceImpl {
                 }
                 dyForList(strList); // 一次括号结束，用新的strList再次调用自己
             }
-
         }
 
         return strList;
     }
 
+    /*
+    * 判断 :and :or :remove 操作符
+    * 构建query语句
+    * */
     public static QueryBuilder toQueryBuild(List<QueryBuilder> queryList2, List act){
         List queryList = new ArrayList();
         for (int i=0;i<queryList2.size();i++){  //queryList2 赋值给 queryList
@@ -81,6 +88,10 @@ public class SqlToEs extends BaseSearchServiceImpl {
         return (QueryBuilder) queryList.get(0);
     }
 
+    /*
+    * 判断 :in = > >= < <= 关系符
+    * 构建最小 关系语句
+    * */
     public static QueryBuilder buider(List rk, boolean x){
         // 判断 简单拼装 / 括号拼装 ;     true：括号拼装
         int numL = rk.size()-1;
