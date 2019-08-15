@@ -27,9 +27,9 @@ public class EssearchApplicationTests {
     @Test
     public void save() {
         // log.info("【创建索引前的数据条数】：{}",esSearchService.getAll().size());
-        String str = "[{'id':5,'productName':'天下读物2','productDesc':'我们让搜索稍微再变的复杂一些。'}," +
-                "{'id':5,'productName':'历史探索2','productDesc':'我们依旧想要找到姓氏为“Smith”的员工'}," +
-                "{'id':5,'productName':'人文读物2','productDesc':'我们的语句将添加过滤器(filter)'}]";
+        String str = "[{'id':5,'productName':'天下读物三','productDesc':'我们让搜索稍微再变的复杂一些。'}," +
+                "{'id':5,'productName':'历史探索三十三','productDesc':'我们依旧想要找到姓氏为“Smith”的员工'}," +
+                "{'id':5,'productName':'人文读物三十','productDesc':'我们的语句将添加过滤器(filter)'}]";
         JSONArray jsonArray = JSONArray.parseArray(str);
         int num = esSearchService.getAll().size();
 //        System.out.println(jsonArray);
@@ -124,18 +124,28 @@ public class EssearchApplicationTests {
     }
 
     @Test
+    public void queryZdy() {
+        log.info("【自定义搜索内容】：{}", JSON.toJSONString(esSearchService.queryZdy("", ProductDocument.class)));
+    }
+
+    @Test
     public void query2() {
         log.info("【单字段匹配单关键词查询】：{}", JSON.toJSONString(esSearchService.query2("天下读物2", ProductDocument.class)));
     }
 
     @Test
     public void query3() {
-        log.info("【多字段各自匹配单关键词查询】：{}", JSON.toJSONString(esSearchService.query3("荣耀，1558688764572", ProductDocument.class)));
+        log.info("【多字段各自匹配单关键词查询】：{}", JSON.toJSONString(esSearchService.query3("三，1558688764572", ProductDocument.class)));
     }
 
     @Test
     public void query4() {
         log.info("【根据关键词范围查询】：{}", JSON.toJSONString(esSearchService.query4("1558688764572", ProductDocument.class)));
+    }
+
+    @Test
+    public void query5() {
+        log.info("【手动拼装ES查询语句】：{}", JSON.toJSONString(esSearchService.query5(ProductDocument.class)));
     }
 
     @Test

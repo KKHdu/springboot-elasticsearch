@@ -27,6 +27,10 @@ public interface BaseSearchService<T> {
 
     List<T> query4(String keyword, Class<T> clazz);
 
+    List<T> query5(Class<T> clazz);
+
+    List<T> queryZdy(String keyword, Class<T> clazz);
+
     /**
      * 搜索高亮显示
      * @param keyword       关键字

@@ -5,18 +5,18 @@ import com.zhou.essearch.service.BaseSearchService;
 import com.zhou.essearch.tool.SqlToEs;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.text.Text;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.QueryStringQueryBuilder;
+import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
@@ -120,6 +120,17 @@ public class BaseSearchServiceImpl<T> implements BaseSearchService<T> {
 
 
     @Override
+    public List<T> queryZdy(String keyword, Class<T> clazz) {
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(new QueryStringQueryBuilder(keyword)) // 全局匹配查询
+                .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
+                // .withSort(new FieldSortBuilder("").order(SortOrder.DESC))
+                .build();
+        System.out.println("查询的语句:" + searchQuery.getQuery().toString());
+        return elasticsearchTemplate.queryForList(searchQuery,clazz);
+    }
+
+    @Override
     public List<T> query(String keyword, Class<T> clazz) {
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(new QueryStringQueryBuilder(keyword)) // 全局匹配查询
@@ -137,7 +148,7 @@ public class BaseSearchServiceImpl<T> implements BaseSearchService<T> {
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(queryBuilder) // 单字段匹配关键词查询
                 .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
-                // .withSort(new FieldSortBuilder("productName").order(SortOrder.DESC))
+                // .withSort(new FieldSortBuilder("_score").order(SortOrder.DESC))
                 .build();
         System.out.println("查询的语句:" + searchQuery.getQuery().toString());
         return elasticsearchTemplate.queryForList(searchQuery,clazz);
@@ -147,15 +158,18 @@ public class BaseSearchServiceImpl<T> implements BaseSearchService<T> {
     public List<T> query3(String keywords, Class<T> clazz) {
         List keyword = Arrays.asList(keywords.split("，"));
         // 关键词匹配
-        QueryBuilder queryBuilder1 = createQueryBuilder(keyword.get(0).toString(),"productName");
-        QueryBuilder queryBuilder2 = createQueryBuilder(keyword.get(1).toString(),"createTime");
+        QueryBuilder queryBuilder1 = createQueryBuilder(keyword.get(0).toString(),"productName","productDesc");
+        // QueryBuilder queryBuilder2 = createQueryBuilder(keyword.get(1).toString(),"createTime");
         //and链接两个查询条件用must()，or的话使用should()，remove的话使用mustNot()。
-        QueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryBuilder1).mustNot(queryBuilder2);
+        QueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryBuilder1);
 
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(queryBuilder) // 多字段各自匹配关键词查询
                 .withSort(SortBuilders.scoreSort().order(SortOrder.DESC))
-                // .withSort(new FieldSortBuilder("productName").order(SortOrder.DESC))
+                .withFields("productName")
+                .withMinScore(0.9f)
+                // .withPageable()
+                // .withSort(new FieldSortBuilder("_score").order(SortOrder.DESC))
                 .build();
         System.out.println("查询的语句:" + searchQuery.getQuery().toString());
         return elasticsearchTemplate.queryForList(searchQuery,clazz);
@@ -175,6 +189,18 @@ public class BaseSearchServiceImpl<T> implements BaseSearchService<T> {
                 .build();
         System.out.println("查询的语句:" + searchQuery.getQuery().toString());
         return elasticsearchTemplate.queryForList(searchQuery,clazz);
+    }
+
+    @Override
+    public List<T> query5(Class<T> clazz) {
+        // String dsl = "{"bool": {"must":  ... ";
+        StringBuffer dsl = new StringBuffer();
+        dsl.append("{\"bool\": {\"must\": [{\"match_all\": { }}],\"must_not\": [ ],\"should\": [ ]}},\"from\": 0,\"size\": 1,\"sort\": [ ],\"aggs\": { }");
+        WrapperQueryBuilder wqb = QueryBuilders.wrapperQuery(dsl.toString());
+        SearchQuery searchQuery1 = new NativeSearchQueryBuilder()
+                .withQuery(wqb)
+                .build();
+        return elasticsearchTemplate.queryForList(searchQuery1,clazz);
     }
 
     /**
@@ -202,6 +228,7 @@ public class BaseSearchServiceImpl<T> implements BaseSearchService<T> {
 
         return getHitList(hits);
     }
+
     /**
      * 高亮显示，返回分页
      * @auther: zhoudong
